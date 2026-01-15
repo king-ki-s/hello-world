@@ -1,103 +1,255 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>System Online</title>
+    <title>Kishore | SakuraOS</title>
     <style>
         body { 
-            background-color: #0d0d0d; 
-            color: #00ff41; 
-            font-family: 'Courier New', Courier, monospace; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
             margin: 0; 
+            overflow: hidden; 
+            /* Dark purple gradient background */
+            background: linear-gradient(to bottom, #1a1a2e, #16213e);
+            font-family: 'Courier New', Courier, monospace;
+            color: #ffffff;
         }
-        .terminal { 
-            border: 1px solid #00ff41; 
-            padding: 40px; 
-            box-shadow: 0 0 20px rgba(0, 255, 65, 0.2); 
-            max-width: 600px; 
+        
+        /* Shared Canvas Styles */
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Layer 1: Background Canvas (Behind everything) */
+        #canvas-bg {
+            z-index: -1;
+        }
+
+        /* Layer 3: Foreground Canvas (On top of everything) */
+        #canvas-fg {
+            z-index: 10;
+            /* CRITICAL: This lets clicks pass through to the buttons below */
+            pointer-events: none; 
+        }
+
+        /* Layer 2: The Frosted Glass Container */
+        .container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 5; /* Sitting between the canvases */
+            
+            /* Pink tinted glass */
+            background: rgba(40, 20, 40, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 183, 197, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            
+            padding: 40px;
+            border-radius: 20px;
             width: 80%;
+            max-width: 600px;
             min-height: 300px;
         }
-        /* Links style */
-        a { 
-            color: #fff; 
-            text-decoration: none; 
-            border: 1px solid #00ff41; 
-            padding: 5px 10px;
-            margin-right: 15px;
-            transition: 0.3s;
+
+        h1 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            color: #ffb7c5; /* Sakura Pink */
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 1px solid rgba(255, 183, 197, 0.3);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
         }
-        a:hover { 
-            background-color: #00ff41; 
-            color: #000; 
-            box-shadow: 0 0 10px #00ff41;
-            cursor: pointer;
+
+        #console {
+            font-size: 1rem;
+            line-height: 1.6;
+            text-shadow: 0 0 5px rgba(255, 183, 197, 0.5);
         }
-        .cursor { 
-            display: inline-block; 
-            width: 10px; 
-            height: 20px; 
-            background-color: #00ff41; 
-            animation: blink 1s infinite; 
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 18px;
+            background-color: #ffb7c5;
+            animation: blink 1s infinite;
+            vertical-align: middle;
         }
+        
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        /* Anime Style Buttons */
+        .btn-group { margin-top: 30px; opacity: 0; transition: opacity 2s; }
+        .btn {
+            display: inline-block;
+            margin-right: 15px;
+            margin-bottom: 10px;
+            padding: 10px 25px;
+            border: 2px solid #ffb7c5;
+            color: #ffb7c5;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            border-radius: 25px;
+            font-weight: bold;
+            position: relative; /* Ensure buttons are clickable */
+            z-index: 6;
+        }
+        .btn:hover {
+            background-color: #ffb7c5;
+            color: #1a1a2e;
+            box-shadow: 0 0 20px rgba(255, 183, 197, 0.6);
+            transform: translateY(-3px);
+        }
+
     </style>
 </head>
 <body>
-    <div class="terminal">
+
+    <canvas id="canvas-bg"></canvas>
+    
+    <canvas id="canvas-fg"></canvas>
+
+    <div class="container">
+        <h1>// SakuraOS_Terminal v2.0</h1>
         <div id="console"></div>
         <p><span class="cursor"></span></p>
+        
+        <div class="btn-group" id="buttons">
+            <a href="https://github.com/king-ki-s" class="btn">GITHUB</a>
+            <a href="https://www.tumblr.com/moon-lit-wonders?source=share" class="btn">VISUALS / AMV</a>
+        </div>
     </div>
 
     <script>
-        // THIS IS THE DATA THE COMPUTER WILL TYPE
+        // --- DOUBLE LAYER SAKURA ANIMATION ---
+        const canvasBg = document.getElementById('canvas-bg');
+        const ctxBg = canvasBg.getContext('2d');
+        const canvasFg = document.getElementById('canvas-fg');
+        const ctxFg = canvasFg.getContext('2d');
+
+        let petalsBgArray = [];
+        let petalsFgArray = [];
+
+        function resizeCanvases() {
+            canvasBg.width = window.innerWidth;
+            canvasBg.height = window.innerHeight;
+            canvasFg.width = window.innerWidth;
+            canvasFg.height = window.innerHeight;
+        }
+        resizeCanvases();
+
+        class Petal {
+            constructor(isForeground) {
+                this.x = Math.random() * canvasBg.width;
+                this.y = Math.random() * -canvasBg.height;
+                // Foreground petals are bigger and faster for depth effect
+                const multiplier = isForeground ? 1.5 : 1; 
+                this.size = (Math.random() * 5 + 2) * multiplier;
+                this.speedY = (Math.random() * 1 + 0.5) * multiplier;
+                this.speedX = Math.random() * 2 - 1;
+                this.angle = Math.random() * 360;
+                this.spin = Math.random() * 0.02 - 0.01;
+                // Foreground petals are slightly more opaque
+                this.opacity = isForeground ? (Math.random() * 0.3 + 0.6) : (Math.random() * 0.5 + 0.2);
+            }
+            update(canvasHeight) {
+                this.y += this.speedY;
+                this.angle += this.spin;
+                this.x += Math.sin(this.angle) * 0.5;
+
+                if (this.y > canvasHeight) {
+                    this.y = Math.random() * -100;
+                    this.x = Math.random() * canvasBg.width;
+                }
+            }
+            draw(ctx) {
+                ctx.fillStyle = `rgba(255, 183, 197, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.ellipse(this.x, this.y, this.size, this.size * 1.5, this.angle, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function init() {
+            petalsBgArray = [];
+            petalsFgArray = [];
+            // 100 background petals
+            for (let i = 0; i < 100; i++) petalsBgArray.push(new Petal(false));
+            // 40 larger foreground petals
+            for (let i = 0; i < 40; i++) petalsFgArray.push(new Petal(true));
+        }
+
+        function animate() {
+            // Clear both canvases
+            ctxBg.clearRect(0, 0, canvasBg.width, canvasBg.height);
+            ctxFg.clearRect(0, 0, canvasFg.width, canvasFg.height);
+
+            // Draw Background Layer
+            for (let i = 0; i < petalsBgArray.length; i++) {
+                petalsBgArray[i].update(canvasBg.height);
+                petalsBgArray[i].draw(ctxBg);
+            }
+            // Draw Foreground Layer
+            for (let i = 0; i < petalsFgArray.length; i++) {
+                petalsFgArray[i].update(canvasFg.height);
+                petalsFgArray[i].draw(ctxFg);
+            }
+            requestAnimationFrame(animate);
+        }
+
+        init();
+        animate();
+        
+        window.addEventListener('resize', function() {
+            resizeCanvases();
+            init();
+        });
+
+
+        // --- TYPING EFFECT ---
         const commands = [
-            "root@github:~$ initiates_protocol",
-            "Loading system resources...",
-            "Accessing user database...",
-            "User Identified: Kishore",
-            "Status: Online",
-            "--------------------",
-            "SELECT MISSION:"
+            "Initializing SakuraOS v2.0...",
+            "Loading aesthetic modules...",
+            "Enabling depth-of-field...",
+            "System Status: Kawaii AF",
+            "Welcome, Kishore.",
+            "--------------------"
         ];
         
         const consoleDiv = document.getElementById('console');
+        const btnGroup = document.getElementById('buttons');
         let lineIndex = 0;
         let charIndex = 0;
 
         function typeWriter() {
             if (lineIndex < commands.length) {
-                // If we are starting a new line, create a <p> tag for it
                 if (charIndex === 0) {
                     const p = document.createElement('p');
                     p.id = `line-${lineIndex}`;
                     consoleDiv.appendChild(p);
                 }
-
-                // Add one character at a time
                 if (charIndex < commands[lineIndex].length) {
                     document.getElementById(`line-${lineIndex}`).innerHTML += commands[lineIndex].charAt(charIndex);
                     charIndex++;
-                    setTimeout(typeWriter, 50); // Speed of typing (lower is faster)
+                    setTimeout(typeWriter, 40);
                 } else {
-                    // Line finished, move to next line
                     lineIndex++;
                     charIndex = 0;
-                    setTimeout(typeWriter, 300); // Pause between lines
+                    setTimeout(typeWriter, 200);
                 }
             } else {
-                // ALL TYPING DONE: REVEAL BUTTONS
-                const links = document.createElement('div');
-                links.innerHTML = '<br><br><a href="https://github.com/king-ki-s">[ GITHUB PROFILE ]</a> <a href="https://www.tumblr.com/moon-lit-wonders?source=share">[ VISUALS / ART ]</a>';
-                consoleDiv.appendChild(links);
+                btnGroup.style.opacity = 1;
             }
         }
         
-        // Start the function when the page loads
-        window.onload = typeWriter;
+        setTimeout(typeWriter, 500);
     </script>
 </body>
 </html>
