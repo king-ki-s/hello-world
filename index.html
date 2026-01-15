@@ -3,52 +3,101 @@
 <head>
     <title>System Online</title>
     <style>
-        body {
-            background-color: #0d0d0d;
-            color: #00ff41;
-            font-family: 'Courier New', Courier, monospace;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
+        body { 
+            background-color: #0d0d0d; 
+            color: #00ff41; 
+            font-family: 'Courier New', Courier, monospace; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
         }
-        .terminal {
-            border: 1px solid #00ff41;
-            padding: 40px;
-            box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
-            max-width: 600px;
+        .terminal { 
+            border: 1px solid #00ff41; 
+            padding: 40px; 
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.2); 
+            max-width: 600px; 
+            width: 80%;
+            min-height: 300px;
         }
-        h1 {
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            border-bottom: 1px dashed #00ff41;
-            padding-bottom: 10px;
+        /* Links style */
+        a { 
+            color: #fff; 
+            text-decoration: none; 
+            border: 1px solid #00ff41; 
+            padding: 5px 10px;
+            margin-right: 15px;
+            transition: 0.3s;
         }
-        .cursor {
-            display: inline-block;
-            width: 10px;
-            height: 20px;
-            background-color: #00ff41;
-            animation: blink 1s infinite;
+        a:hover { 
+            background-color: #00ff41; 
+            color: #000; 
+            box-shadow: 0 0 10px #00ff41;
+            cursor: pointer;
         }
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
+        .cursor { 
+            display: inline-block; 
+            width: 10px; 
+            height: 20px; 
+            background-color: #00ff41; 
+            animation: blink 1s infinite; 
         }
-        a { color: #fff; text-decoration: none; border-bottom: 1px solid #fff; }
-        a:hover { background-color: #fff; color: #000; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
     </style>
 </head>
 <body>
     <div class="terminal">
-        <p>root@github:~$ initiates_protocol</p>
-        <h1>SYSTEM ONLINE</h1>
-        <p>> User: Kishore</p>
-        <p>> Status: Learning Git Deployment</p>
-        <p>> Location: Hosted on GitHub Pages</p>
-        <br>
+        <div id="console"></div>
         <p><span class="cursor"></span></p>
     </div>
+
+    <script>
+        // THIS IS THE DATA THE COMPUTER WILL TYPE
+        const commands = [
+            "root@github:~$ initiates_protocol",
+            "Loading system resources...",
+            "Accessing user database...",
+            "User Identified: Kishore",
+            "Status: Online",
+            "--------------------",
+            "SELECT MISSION:"
+        ];
+        
+        const consoleDiv = document.getElementById('console');
+        let lineIndex = 0;
+        let charIndex = 0;
+
+        function typeWriter() {
+            if (lineIndex < commands.length) {
+                // If we are starting a new line, create a <p> tag for it
+                if (charIndex === 0) {
+                    const p = document.createElement('p');
+                    p.id = `line-${lineIndex}`;
+                    consoleDiv.appendChild(p);
+                }
+
+                // Add one character at a time
+                if (charIndex < commands[lineIndex].length) {
+                    document.getElementById(`line-${lineIndex}`).innerHTML += commands[lineIndex].charAt(charIndex);
+                    charIndex++;
+                    setTimeout(typeWriter, 50); // Speed of typing (lower is faster)
+                } else {
+                    // Line finished, move to next line
+                    lineIndex++;
+                    charIndex = 0;
+                    setTimeout(typeWriter, 300); // Pause between lines
+                }
+            } else {
+                // ALL TYPING DONE: REVEAL BUTTONS
+                const links = document.createElement('div');
+                links.innerHTML = '<br><br><a href="https://github.com/king-ki-s">[ GITHUB PROFILE ]</a> <a href="YOUR_TUMBLR_LINK_HERE">[ VISUALS / ART ]</a>';
+                consoleDiv.appendChild(links);
+            }
+        }
+        
+        // Start the function when the page loads
+        window.onload = typeWriter;
+    </script>
 </body>
 </html>
