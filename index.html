@@ -3,15 +3,18 @@
 <head>
     <title>Kishore | SakuraOS</title>
     <style>
-        body { 
-            margin: 0; 
-            overflow: hidden; 
-            /* Dark purple gradient background */
-            background: linear-gradient(to bottom, #1a1a2e, #16213e);
-            font-family: 'Courier New', Courier, monospace;
-            color: #ffffff;
-        }
+       body { 
+        margin: 0; 
+        overflow: hidden; 
+        font-family: 'Courier New', Courier, monospace;
+        color: #ffffff;
         
+        /* THIS ADDS THE IMAGE BEHIND THE PETALS */
+        background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('background.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }        
         /* Shared Canvas Styles */
         canvas {
             position: absolute;
@@ -39,14 +42,18 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 5; /* Sitting between the canvases */
+            z-index: 5;
             
-            /* Pink tinted glass */
-            background: rgba(40, 20, 40, 0.6);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 183, 197, 0.2);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            /* CHANGE 1: Much more transparent (0.3 instead of 0.6) */
+            background: rgba(0, 0, 0, 0.3); 
+            
+            /* CHANGE 2: Stronger blur to keep text readable against the image */
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            
+            /* Subtle white border */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
             
             padding: 40px;
             border-radius: 20px;
@@ -54,7 +61,7 @@
             max-width: 600px;
             min-height: 300px;
         }
-
+           
         h1 {
             margin-top: 0;
             font-size: 1.2rem;
@@ -117,13 +124,14 @@
     <canvas id="canvas-fg"></canvas>
 
     <div class="container">
-        <h1>// SakuraOS_Terminal v2.0</h1>
+        <h1>MY PORTFOLIO</h1>
         <div id="console"></div>
         <p><span class="cursor"></span></p>
         
         <div class="btn-group" id="buttons">
             <a href="https://github.com/king-ki-s" class="btn">GITHUB</a>
-            <a href="https://www.tumblr.com/moon-lit-wonders?source=share" class="btn">VISUALS / AMV</a>
+            <a href="https://www.tumblr.com/moon-lit-wonders?source=share" class="btn">PHOTOGRAPHY</a>
+	    <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" class="btn" onclick="activateTrap()">DON'T DO IT</a>
         </div>
     </div>
 
@@ -216,10 +224,10 @@
         // --- TYPING EFFECT ---
         const commands = [
             "Initializing SakuraOS v2.0...",
-            "Loading aesthetic modules...",
-            "Enabling depth-of-field...",
+            "Loading modules...",
+            "Enabling something....",
             "System Status: Kawaii AF",
-            "Welcome, Kishore.",
+            "Welcome, whoever you are.",
             "--------------------"
         ];
         
@@ -250,6 +258,38 @@
         }
         
         setTimeout(typeWriter, 500);
+	
+	// --- THE RICKROLL TRAP ---
+        function activateTrap() {
+            // 1. Hide the buttons so they can't escape
+            document.getElementById('buttons').style.display = 'none';
+            
+            // 2. Clear the screen after a small delay
+            setTimeout(() => {
+                const consoleDiv = document.getElementById('console');
+                consoleDiv.innerHTML = ""; // Wipe screen
+                
+                // 3. The Message to display when they return
+                const prankLines = [
+                    "TOLD YOU NOT TO."
+                ];
+
+                // 4. Type it out in RED
+                let pIndex = 0;
+                function printPrank() {
+                    if (pIndex < prankLines.length) {
+                        const p = document.createElement('p');
+                        p.innerHTML = prankLines[pIndex];
+                        p.style.color = "#ff4444"; // Red text
+                        p.style.textShadow = "0 0 5px red";
+                        consoleDiv.appendChild(p);
+                        pIndex++;
+                        setTimeout(printPrank, 1000); // 1 second between lines
+                    }
+                }
+                printPrank();
+            }, 500);
+        }
     </script>
 </body>
 </html>
