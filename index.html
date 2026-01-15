@@ -1,71 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Kishore | SakuraOS</title>
+    <title>Kishor | SakuraOS</title>
     <style>
-       body { 
-        margin: 0; 
-        overflow: hidden; 
-        font-family: 'Courier New', Courier, monospace;
-        color: #ffffff;
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            font-family: 'Courier New', Courier, monospace;
+            color: #ffffff;
+            /* BACKGROUND IMAGE */
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
         
-        /* THIS ADDS THE IMAGE BEHIND THE PETALS */
-        background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('background.jpg');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-    }        
-        /* Shared Canvas Styles */
-        canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
+        canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        #canvas-bg { z-index: -1; }
+        #canvas-fg { z-index: 10; pointer-events: none; }
 
-        /* Layer 1: Background Canvas (Behind everything) */
-        #canvas-bg {
-            z-index: -1;
-        }
-
-        /* Layer 3: Foreground Canvas (On top of everything) */
-        #canvas-fg {
-            z-index: 10;
-            /* CRITICAL: This lets clicks pass through to the buttons below */
-            pointer-events: none; 
-        }
-
-        /* Layer 2: The Frosted Glass Container */
         .container {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 5;
-            
-            /* CHANGE 1: Much more transparent (0.3 instead of 0.6) */
-            background: rgba(0, 0, 0, 0.3); 
-            
-            /* CHANGE 2: Stronger blur to keep text readable against the image */
+            /* GLASS EFFECT */
+            background: rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
-            
-            /* Subtle white border */
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-            
             padding: 40px;
             border-radius: 20px;
             width: 80%;
             max-width: 600px;
             min-height: 300px;
         }
-           
+
         h1 {
             margin-top: 0;
             font-size: 1.2rem;
-            color: #ffb7c5; /* Sakura Pink */
+            color: #ffb7c5;
             text-transform: uppercase;
             letter-spacing: 2px;
             border-bottom: 1px solid rgba(255, 183, 197, 0.3);
@@ -73,30 +49,47 @@
             margin-bottom: 20px;
         }
 
-        #console {
-            font-size: 1rem;
-            line-height: 1.6;
-            text-shadow: 0 0 5px rgba(255, 183, 197, 0.5);
-        }
+        #console { font-size: 1rem; line-height: 1.6; min-height: 150px;}
 
-        .cursor {
+        /* --- THE NEW CURSOR LOGIC --- */
+        /* The cursor is now a "pseudo-element" attached to the active line */
+        .typing::after {
+            content: '';
             display: inline-block;
             width: 10px;
             height: 18px;
             background-color: #ffb7c5;
-            
-            /* NEW: Adds a neon glow */
-            box-shadow: 0 0 10px #ffb7c5; 
-            
-            /* NEW: Smoother animation */
-            animation: breathe 1s infinite alternate; 
-            vertical-align: middle;
+            box-shadow: 0 0 10px #ffb7c5; /* Neon Glow */
+            animation: breathe 1s infinite alternate;
+            vertical-align: text-bottom;
+            margin-left: 5px;
+        }
+
+        @keyframes breathe { 0% { opacity: 0.2; } 100% { opacity: 1; } }
+
+        /* BUTTONS HIDDEN AT START */
+        .btn-group { 
+            margin-top: 30px; 
+            opacity: 0; /* Hidden initially */
+            transition: opacity 2s; 
         }
         
-        /* New Animation: Smooth fading instead of harsh blinking */
-        @keyframes breathe { 
-            0% { opacity: 0.1; } 
-            100% { opacity: 1; } 
+        .btn {
+            display: inline-block;
+            margin-right: 15px;
+            margin-bottom: 10px;
+            padding: 10px 25px;
+            border: 2px solid #ffb7c5;
+            color: #ffb7c5;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            border-radius: 25px;
+            font-weight: bold;
+            position: relative;
+            z-index: 6;
+            cursor: pointer;
         }
         .btn:hover {
             background-color: #ffb7c5;
@@ -104,34 +97,31 @@
             box-shadow: 0 0 20px rgba(255, 183, 197, 0.6);
             transform: translateY(-3px);
         }
-
     </style>
 </head>
 <body>
 
     <canvas id="canvas-bg"></canvas>
-    
     <canvas id="canvas-fg"></canvas>
 
     <div class="container">
-        <h1>MY PORTFOLIO</h1>
+        <h1>// HELLO THERE</h1>
         <div id="console"></div>
-        <p><span class="cursor"></span></p>
         
         <div class="btn-group" id="buttons">
             <a href="https://github.com/king-ki-s" class="btn">GITHUB</a>
-            <a href="https://www.tumblr.com/moon-lit-wonders?source=share" class="btn">PHOTOGRAPHY</a>
-	    <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" class="btn" onclick="activateTrap()">DON'T DO IT</a>
+            <a href="https://www.tumblr.com/moon-lit-wonders?source=share" class="btn">MY PHOTOGRAPHY</a>
+            <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" class="btn" onclick="activateTrap()">DON'T CLICK</a>
+        
         </div>
     </div>
 
     <script>
-        // --- DOUBLE LAYER SAKURA ANIMATION ---
+        // --- 1. SAKURA ANIMATION ---
         const canvasBg = document.getElementById('canvas-bg');
         const ctxBg = canvasBg.getContext('2d');
         const canvasFg = document.getElementById('canvas-fg');
         const ctxFg = canvasFg.getContext('2d');
-
         let petalsBgArray = [];
         let petalsFgArray = [];
 
@@ -147,21 +137,18 @@
             constructor(isForeground) {
                 this.x = Math.random() * canvasBg.width;
                 this.y = Math.random() * -canvasBg.height;
-                // Foreground petals are bigger and faster for depth effect
                 const multiplier = isForeground ? 1.5 : 1; 
                 this.size = (Math.random() * 5 + 2) * multiplier;
                 this.speedY = (Math.random() * 1 + 0.5) * multiplier;
                 this.speedX = Math.random() * 2 - 1;
                 this.angle = Math.random() * 360;
                 this.spin = Math.random() * 0.02 - 0.01;
-                // Foreground petals are slightly more opaque
                 this.opacity = isForeground ? (Math.random() * 0.3 + 0.6) : (Math.random() * 0.5 + 0.2);
             }
             update(canvasHeight) {
                 this.y += this.speedY;
                 this.angle += this.spin;
                 this.x += Math.sin(this.angle) * 0.5;
-
                 if (this.y > canvasHeight) {
                     this.y = Math.random() * -100;
                     this.x = Math.random() * canvasBg.width;
@@ -174,48 +161,27 @@
                 ctx.fill();
             }
         }
-
         function init() {
-            petalsBgArray = [];
-            petalsFgArray = [];
-            // 100 background petals
+            petalsBgArray = []; petalsFgArray = [];
             for (let i = 0; i < 100; i++) petalsBgArray.push(new Petal(false));
-            // 40 larger foreground petals
             for (let i = 0; i < 40; i++) petalsFgArray.push(new Petal(true));
         }
-
         function animate() {
-            // Clear both canvases
             ctxBg.clearRect(0, 0, canvasBg.width, canvasBg.height);
             ctxFg.clearRect(0, 0, canvasFg.width, canvasFg.height);
-
-            // Draw Background Layer
-            for (let i = 0; i < petalsBgArray.length; i++) {
-                petalsBgArray[i].update(canvasBg.height);
-                petalsBgArray[i].draw(ctxBg);
-            }
-            // Draw Foreground Layer
-            for (let i = 0; i < petalsFgArray.length; i++) {
-                petalsFgArray[i].update(canvasFg.height);
-                petalsFgArray[i].draw(ctxFg);
-            }
+            for (let i = 0; i < petalsBgArray.length; i++) { petalsBgArray[i].update(canvasBg.height); petalsBgArray[i].draw(ctxBg); }
+            for (let i = 0; i < petalsFgArray.length; i++) { petalsFgArray[i].update(canvasFg.height); petalsFgArray[i].draw(ctxFg); }
             requestAnimationFrame(animate);
         }
-
         init();
         animate();
-        
-        window.addEventListener('resize', function() {
-            resizeCanvases();
-            init();
-        });
+        window.addEventListener('resize', () => { resizeCanvases(); init(); });
 
-
-        // --- TYPING EFFECT ---
+        // --- 2. TYPING ENGINE (FIXED) ---
         const commands = [
-            "Initializing SakuraOS v2.0...",
+            "Initializing SakuraOS v3.0...",
             "Loading modules...",
-            "Enabling something....",
+            "Enabling smething...",
             "System Status: Kawaii AF",
             "Welcome, whoever you are.",
             "--------------------"
@@ -225,67 +191,64 @@
         const btnGroup = document.getElementById('buttons');
         let lineIndex = 0;
         let charIndex = 0;
+        let currentP = null; // The current paragraph being typed
 
         function typeWriter() {
             if (lineIndex < commands.length) {
-                // If starting a new line, create the <p> tag
+                // Start of a new line
                 if (charIndex === 0) {
-                    const p = document.createElement('p');
-                    p.id = `line-${lineIndex}`;
-                    consoleDiv.appendChild(p);
+                    // Remove cursor from previous line if it exists
+                    if (currentP) currentP.classList.remove('typing');
+                    
+                    // Create new line
+                    currentP = document.createElement('p');
+                    currentP.classList.add('typing'); // Add cursor to this line
+                    consoleDiv.appendChild(currentP);
                 }
                 
-                // If there are still characters to type in this line
+                // Typing characters
                 if (charIndex < commands[lineIndex].length) {
-                    document.getElementById(`line-${lineIndex}`).innerHTML += commands[lineIndex].charAt(charIndex);
+                    currentP.innerHTML += commands[lineIndex].charAt(charIndex);
                     charIndex++;
-                    setTimeout(typeWriter, 40); // Typing speed
+                    setTimeout(typeWriter, 40);
                 } else {
-                    // Line finished, move to next line after a small pause
+                    // Line finished
                     lineIndex++;
                     charIndex = 0;
-                    setTimeout(typeWriter, 200); 
+                    setTimeout(typeWriter, 200);
                 }
             } else {
-                // --- EVERYTHING IS FINISHED ---
-                
-                // 1. Hide the cursor
-                document.querySelector('.cursor').style.display = 'none';
-                
-                // 2. Reveal the buttons
-                btnGroup.style.opacity = 1;
+                // ALL DONE
+                if (currentP) currentP.classList.remove('typing'); // Remove cursor
+                btnGroup.style.opacity = 1; // Show buttons
             }
         }
         
         setTimeout(typeWriter, 500);
-	
-	// --- THE RICKROLL TRAP ---
+
+        // --- 3. THE TRAP ---
         function activateTrap() {
-            // 1. Hide the buttons so they can't escape
             document.getElementById('buttons').style.display = 'none';
-	     document.querySelector('h1').style.display = 'none';
+            document.querySelector('h1').style.display = 'none';
             
-            // 2. Clear the screen after a small delay
             setTimeout(() => {
                 const consoleDiv = document.getElementById('console');
-                consoleDiv.innerHTML = ""; // Wipe screen
-                
-                // 3. The Message to display when they return
+                consoleDiv.innerHTML = "";
                 const prankLines = [
-                    "TOLD YOU NOT TO."
+                    "TOLD YOU NOT TO. NOW REFRESH."
                 ];
-
-                // 4. Type it out in RED
                 let pIndex = 0;
                 function printPrank() {
                     if (pIndex < prankLines.length) {
                         const p = document.createElement('p');
                         p.innerHTML = prankLines[pIndex];
-                        p.style.color = "#00ffff"; // cyan text
-                        p.style.textShadow = "0 0 10px #00ffff";
+                        p.style.color = "#ff0000"; 
+                        p.style.textShadow = "0 0 10px #ff0000";
+                        p.style.fontWeight = "bold";
+                        p.style.fontSize = "1.1rem";
                         consoleDiv.appendChild(p);
                         pIndex++;
-                        setTimeout(printPrank, 1000); // 1 second between lines
+                        setTimeout(printPrank, 1000); 
                     }
                 }
                 printPrank();
