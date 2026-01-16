@@ -125,13 +125,12 @@
     </div>
 
     <script>
-        // --- 1. SAKURA ANIMATION ---
+        // --- 1. SAKURA ENGINE ---
         const canvasBg = document.getElementById('canvas-bg');
         const ctxBg = canvasBg.getContext('2d');
         const canvasFg = document.getElementById('canvas-fg');
         const ctxFg = canvasFg.getContext('2d');
-        let petalsBgArray = [];
-        let petalsFgArray = [];
+        let petalsBgArray = []; let petalsFgArray = [];
 
         function resizeCanvases() {
             canvasBg.width = window.innerWidth;
@@ -185,73 +184,80 @@
         animate();
         window.addEventListener('resize', () => { resizeCanvases(); init(); });
 
-        // --- 2. TYPING ENGINE (FIXED) ---
+        // --- 2. TYPING ENGINE ---
         const commands = [
             "Initializing SakuraOS v3.0...",
             "Loading modules...",
             "Enabling something...",
             "System Status: Kawaii AF",
             "Welcome, whoever you are.",
-            "--------------------"
+            "Wanna see what i could do?"
         ];
         
         const consoleDiv = document.getElementById('console');
         const btnGroup = document.getElementById('buttons');
         let lineIndex = 0;
         let charIndex = 0;
-        let currentP = null; // The current paragraph being typed
+        let currentP = null; 
 
         function typeWriter() {
             if (lineIndex < commands.length) {
-                // Start of a new line
                 if (charIndex === 0) {
-                    // Remove cursor from previous line if it exists
                     if (currentP) currentP.classList.remove('typing');
-                    
-                    // Create new line
                     currentP = document.createElement('p');
-                    currentP.classList.add('typing'); // Add cursor to this line
+                    currentP.classList.add('typing'); 
                     consoleDiv.appendChild(currentP);
                 }
-                
-                // Typing characters
                 if (charIndex < commands[lineIndex].length) {
                     currentP.innerHTML += commands[lineIndex].charAt(charIndex);
                     charIndex++;
                     setTimeout(typeWriter, 40);
                 } else {
-                    // Line finished
                     lineIndex++;
                     charIndex = 0;
                     setTimeout(typeWriter, 200);
                 }
             } else {
-                // ALL DONE
-                if (currentP) currentP.classList.remove('typing'); // Remove cursor
-                btnGroup.style.opacity = 1; // Show buttons
+                if (currentP) currentP.classList.remove('typing'); 
+                btnGroup.style.opacity = 1; 
             }
         }
-        
         setTimeout(typeWriter, 500);
 
-        // --- 3. THE TRAP ---
+        // --- 3. THE "AMBUSH" TRAP (Mobile Fixed) ---
+        let trapArmed = false;
+
         function activateTrap() {
+            // 1. Arm the trap
+            trapArmed = true;
+            
+            // 2. Hide interface immediately so they can't click anything else
             document.getElementById('buttons').style.display = 'none';
             document.querySelector('h1').style.display = 'none';
             
-            setTimeout(() => {
+            // Note: We DO NOT wipe the screen yet. We wait for them to come back.
+        }
+
+        // 4. This listener waits for the user to return to the tab
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "visible" && trapArmed) {
+                // User has returned! Trigger the trap NOW.
+                trapArmed = false; // Disarm so it doesn't happen twice
+                
                 const consoleDiv = document.getElementById('console');
-                consoleDiv.innerHTML = "";
+                consoleDiv.innerHTML = ""; // NOW we wipe the screen
+                
                 const prankLines = [
-                    "TOLD YOU NOT TO. NOW REFRESH."
+                    "TOLD YA NOT TO ! NOW REFRESH."
                 ];
+                
                 let pIndex = 0;
                 function printPrank() {
                     if (pIndex < prankLines.length) {
                         const p = document.createElement('p');
                         p.innerHTML = prankLines[pIndex];
-                        p.style.color = "#ff0000"; 
-                        p.style.textShadow = "0 0 10px #ff0000";
+                        p.style.color = "#ff4444"; 
+                        p.style.textShadow = "0 0 10px #ff4444";
                         p.style.fontWeight = "bold";
                         p.style.fontSize = "1.1rem";
                         consoleDiv.appendChild(p);
@@ -260,8 +266,8 @@
                     }
                 }
                 printPrank();
-            }, 500);
-        }
+            }
+        });
     </script>
 </body>
 </html>
