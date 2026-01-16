@@ -1,34 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Kishor | SakuraOS</title>
-<style>
-        /* 1. THE NUCLEAR FIX: Force both HTML and Body to fill the screen */
+    <title>Kishore | SakuraOS</title>
+    <style>
+        /* 1. RESET & FULL SCREEN SETUP */
         html, body {
             height: 100%;
             width: 100%;
             margin: 0;
             padding: 0;
-            overflow: hidden; /* Stop scrolling */
+            overflow: hidden;
         }
 
         body { 
             font-family: 'Courier New', Courier, monospace;
             color: #ffffff;
-            
-            /* BACKGROUND SETTINGS */
-            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('background.jpg');
-            background-size: cover;       /* Stretch to cover everything */
-            background-position: center;  /* Center the image */
-            background-repeat: no-repeat; /* No tiling */
+            background-color: #1a1a2e; 
+            /* BACKGROUND IMAGE */
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('bg.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
-        
-        /* 2. CANVAS LAYERS */
+
+        /* 2. LAYOUT */
         canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
         #canvas-bg { z-index: -1; }
         #canvas-fg { z-index: 10; pointer-events: none; }
 
-        /* 3. THE GLASS BOX */
         .container {
             position: absolute;
             top: 50%;
@@ -45,6 +44,7 @@
             width: 80%;
             max-width: 600px;
             min-height: 300px;
+            box-sizing: border-box;
         }
 
         h1 {
@@ -58,9 +58,9 @@
             margin-bottom: 20px;
         }
 
-        #console { font-size: 1rem; line-height: 1.6; min-height: 150px;}
+        #console { font-size: 1rem; line-height: 1.6; min-height: 150px; }
 
-        /* 4. CURSOR LOGIC */
+        /* 3. CURSOR & TYPING */
         .typing::after {
             content: '';
             display: inline-block;
@@ -72,16 +72,10 @@
             vertical-align: text-bottom;
             margin-left: 5px;
         }
-
         @keyframes breathe { 0% { opacity: 0.2; } 100% { opacity: 1; } }
 
-        /* 5. BUTTON STYLES */
-        .btn-group { 
-            margin-top: 30px; 
-            opacity: 0; 
-            transition: opacity 2s; 
-        }
-        
+        /* 4. BUTTONS */
+        .btn-group { margin-top: 30px; opacity: 0; transition: opacity 2s; }
         .btn {
             display: inline-block;
             margin-right: 15px;
@@ -113,19 +107,17 @@
     <canvas id="canvas-fg"></canvas>
 
     <div class="container">
-        <h1> HELLO THERE ! </h1>
+        <h1>HELLO THERE</h1>
         <div id="console"></div>
         
         <div class="btn-group" id="buttons">
             <a href="https://github.com/king-ki-s" class="btn">GITHUB</a>
-            <a href="https://www.tumblr.com/moon-lit-wonders?source=share" class="btn">MY PHOTOGRAPHY</a>
+            <a href="https://www.tumblr.com/moon-lit-wonders?source=share" class="btn">PHOTOGRAPHY</a>
             <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" class="btn" onclick="activateTrap()">DON'T CLICK</a>
-        
         </div>
     </div>
 
     <script>
-       <script>
         // --- 1. SAKURA ENGINE ---
         const canvasBg = document.getElementById('canvas-bg');
         const ctxBg = canvasBg.getContext('2d');
@@ -186,13 +178,16 @@
         window.addEventListener('resize', () => { resizeCanvases(); init(); });
 
         // --- 2. TYPING ENGINE ---
+        // ⚠️ CAREFUL EDITING THIS LIST! 
+        // 1. Every line must have "quotes".
+        // 2. Every line must end with a comma, EXCEPT the last one.
         const commands = [
             "Initializing SakuraOS v3.0...",
             "Loading modules...",
             "Enabling something...",
             "System Status: Kawaii AF",
             "Welcome, Kishore.",
-            "Wanna see what i could do ?"
+            "Wanna see what i can do ? "
         ];
         
         const consoleDiv = document.getElementById('console');
@@ -225,19 +220,16 @@
         }
         setTimeout(typeWriter, 500);
 
-        // --- 3. THE TRAP (DESKTOP FIXED) ---
+        // --- 3. THE TRAP (DESKTOP + MOBILE V5.0) ---
         let trapArmed = false;
         let trapFired = false;
 
         function activateTrap() {
-            // 1. Arm the trap
             trapArmed = true;
-            
-            // 2. Hide UI
             document.getElementById('buttons').style.display = 'none';
             document.querySelector('h1').style.display = 'none';
 
-            // 3. Fallback: If they don't switch tabs (e.g. CTRL+Click), fire anyway after 3s
+            // Fallback Timer
             setTimeout(() => {
                 if (!document.hidden && !trapFired) {
                     fireRickRoll();
@@ -245,7 +237,6 @@
             }, 3000);
         }
 
-        // 4. The Trigger: Fires ONLY when you look at the tab
         document.addEventListener("visibilitychange", () => {
             if (document.visibilityState === "visible" && trapArmed && !trapFired) {
                 fireRickRoll();
@@ -253,9 +244,9 @@
         });
 
         function fireRickRoll() {
-            trapFired = true; // Prevent double firing
+            trapFired = true; 
             const consoleDiv = document.getElementById('console');
-            consoleDiv.innerHTML = ""; // Wipe screen NOW
+            consoleDiv.innerHTML = ""; 
             
             const prankLines = [
                 "TOLD YA NOT TO ! NOW REFRESH."
@@ -270,7 +261,6 @@
                     p.style.textShadow = "0 0 10px #ff4444";
                     p.style.fontWeight = "bold";
                     p.style.fontSize = "1.1rem";
-                    
                     consoleDiv.appendChild(p);
                     pIndex++;
                     setTimeout(printPrank, 1000); 
