@@ -125,6 +125,7 @@
     </div>
 
     <script>
+       <script>
         // --- 1. SAKURA ENGINE ---
         const canvasBg = document.getElementById('canvas-bg');
         const ctxBg = canvasBg.getContext('2d');
@@ -190,8 +191,8 @@
             "Loading modules...",
             "Enabling something...",
             "System Status: Kawaii AF",
-            "Welcome, whoever you are.",
-            "Wanna see what i could do?"
+            "Welcome, Kishore.",
+            "Wanna see what i could do ?"
         ];
         
         const consoleDiv = document.getElementById('console');
@@ -224,50 +225,59 @@
         }
         setTimeout(typeWriter, 500);
 
-        // --- 3. THE "AMBUSH" TRAP (Mobile Fixed) ---
+        // --- 3. THE TRAP (DESKTOP FIXED) ---
         let trapArmed = false;
+        let trapFired = false;
 
         function activateTrap() {
             // 1. Arm the trap
             trapArmed = true;
             
-            // 2. Hide interface immediately so they can't click anything else
+            // 2. Hide UI
             document.getElementById('buttons').style.display = 'none';
             document.querySelector('h1').style.display = 'none';
-            
-            // Note: We DO NOT wipe the screen yet. We wait for them to come back.
+
+            // 3. Fallback: If they don't switch tabs (e.g. CTRL+Click), fire anyway after 3s
+            setTimeout(() => {
+                if (!document.hidden && !trapFired) {
+                    fireRickRoll();
+                }
+            }, 3000);
         }
 
-        // 4. This listener waits for the user to return to the tab
+        // 4. The Trigger: Fires ONLY when you look at the tab
         document.addEventListener("visibilitychange", () => {
-            if (document.visibilityState === "visible" && trapArmed) {
-                // User has returned! Trigger the trap NOW.
-                trapArmed = false; // Disarm so it doesn't happen twice
-                
-                const consoleDiv = document.getElementById('console');
-                consoleDiv.innerHTML = ""; // NOW we wipe the screen
-                
-                const prankLines = [
-                    "TOLD YA NOT TO ! NOW REFRESH."
-                ];
-                
-                let pIndex = 0;
-                function printPrank() {
-                    if (pIndex < prankLines.length) {
-                        const p = document.createElement('p');
-                        p.innerHTML = prankLines[pIndex];
-                        p.style.color = "#ff4444"; 
-                        p.style.textShadow = "0 0 10px #ff4444";
-                        p.style.fontWeight = "bold";
-                        p.style.fontSize = "1.1rem";
-                        consoleDiv.appendChild(p);
-                        pIndex++;
-                        setTimeout(printPrank, 1000); 
-                    }
-                }
-                printPrank();
+            if (document.visibilityState === "visible" && trapArmed && !trapFired) {
+                fireRickRoll();
             }
         });
+
+        function fireRickRoll() {
+            trapFired = true; // Prevent double firing
+            const consoleDiv = document.getElementById('console');
+            consoleDiv.innerHTML = ""; // Wipe screen NOW
+            
+            const prankLines = [
+                "TOLD YA NOT TO ! NOW REFRESH."
+            ];
+            
+            let pIndex = 0;
+            function printPrank() {
+                if (pIndex < prankLines.length) {
+                    const p = document.createElement('p');
+                    p.innerHTML = prankLines[pIndex];
+                    p.style.color = "#ff4444"; 
+                    p.style.textShadow = "0 0 10px #ff4444";
+                    p.style.fontWeight = "bold";
+                    p.style.fontSize = "1.1rem";
+                    
+                    consoleDiv.appendChild(p);
+                    pIndex++;
+                    setTimeout(printPrank, 1000); 
+                }
+            }
+            printPrank();
+        }
     </script>
 </body>
 </html>
